@@ -488,7 +488,7 @@
 				SIMPLEX_GRID([[0,10],[0,12],[0,0.05]]));
 			grass.push(T([0,1])([-21-10-3,-6])(grass4));
 			var grass5 = COLOR(grassColor)(
-				SIMPLEX_GRID([[0,10],[0,30+9],[0,0.05]]));
+				SIMPLEX_GRID([[0,10],[0,30+9+4],[0,0.05]]));
 			grass.push(T([0,1])([-21-10-3,-30-9-14])(grass5));
 
 
