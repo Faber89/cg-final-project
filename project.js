@@ -21,9 +21,9 @@
 	var roofColor = [165/255,42/255,42/255];
 
 	//Domains
-	var domain2 = DOMAIN([[0,1],[0,1]])([30,1]);
+	var domain2 = DOMAIN([[0,1],[0,1]])([40,1]);
 	var domain2pi = DOMAIN([[0,1],[0,2*PI]])([20,80]);
-	var domain3 = DOMAIN([[0,1],[0,1],[0,1]])([20,1,1]);
+	var domain3 = DOMAIN([[0,1],[0,1],[0,1]])([30,1,1]);
 
 
 	var makeKnots = function(points,grade){
