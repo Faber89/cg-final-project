@@ -14,7 +14,7 @@
 	var baseColor1 = [255/255,248/255,220/255];
 	var baseColor = [255/255,229/255,180/255];
 	var columnsColor = [253/255,245/255,230/255];
-	var groundColor = [250/255,250/255,250/255];
+	var groundColor = [255/255,255/255,236/255];
 
 	var windowsColor = [164/255,211/255,238/255,0.9];
 	var grassColor = [84/255,139/255,84/255];
@@ -436,18 +436,18 @@
 
 			//Ground
 			var ground = [];
-			var ground1 = T([0,1,2])([-21,-23,-1.5])(
-				SIMPLEX_GRID([[0,46],[0,50],[0,1.5]]));
+			var ground1 = T([0,1,2])([-21,-23-30,-1.5])(
+				SIMPLEX_GRID([[0,46],[0,50+30],[0,1.5]]));
 			ground.push(ground1);
-			var ground2 = T([0,1,2])([-35,-23-45,-1.5])(
-				SIMPLEX_GRID([[0,68],[0,45],[0,1.5]]));
-			ground.push(ground2);
-			var ground3 = T([0,1,2])([-21-14,-23,-1.5])(
-				SIMPLEX_GRID([[0,14],[0,23+20],[0,1.5]]));
+			var ground3 = T([0,1,2])([-21-14,-23-30,-1.5])(
+				SIMPLEX_GRID([[0,14],[0,23+20+30],[0,1.5]]));
 			ground.push(ground3);
+			var ground4 = T([0,1,2])([25,-23-30,-1.5])(
+				SIMPLEX_GRID([[0,8],[0,30],[0,1.5]]));
+			ground.push(ground4);
 
-			var goundBorder = T([0,1,2])([33,-23-45,-1.5])(
-				SIMPLEX_GRID([[0,0.6],[0,45],[0,1.5+0.6]]));
+			var goundBorder = T([0,1,2])([33,-23-30,-1.5])(
+				SIMPLEX_GRID([[0,0.6],[0,30],[0,1.5+0.6]]));
 			ground.push(goundBorder);		
 			var goundBorder1 = T([0,1,2])([25,-23,-1.5])(
 				SIMPLEX_GRID([[0,8+0.6],[0,0.6],[0,1.5+0.6]]));
@@ -464,8 +464,8 @@
 			var goundBorder5 = T([0,1,2])([-21-0.6-14,20,-1.5])(
 				SIMPLEX_GRID([[0,14],[0,0.6],[0,1.5+0.6]]));
 			ground.push(goundBorder5);
-			var goundBorder6 = T([0,1,2])([-21-14-0.6,-23-45,-1.5])(
-				SIMPLEX_GRID([[0,0.6],[0,43+45],[0,1.5+0.6]]));
+			var goundBorder6 = T([0,1,2])([-21-14-0.6,-23-30,-1.5])(
+				SIMPLEX_GRID([[0,0.6],[0,43+30],[0,1.5+0.6]]));
 			ground.push(goundBorder6);
 
 			ground = COLOR(groundColor)(STRUCT(ground));
@@ -475,39 +475,37 @@
 			var grass = [];
 
 			var grass1 = COLOR(grassColor)(
-				SIMPLEX_GRID([[0,5.5],[0,10],[0,0.03]]));
+				SIMPLEX_GRID([[0,5.5],[0,10],[0,0.05]]));
 			grass.push(T([0,1])([-18,-19])(grass1));
 			grass.push(T([0,1])([18-5.5,-19])(grass1));
 			var grass2 = COLOR(grassColor)(
-				SIMPLEX_GRID([[0,15],[0,28],[0,0.03]]));
-			grass.push(T([0,1])([-7.5,-28-26])(grass2));
+				SIMPLEX_GRID([[0,11],[0,20],[0,0.05]]));
+			grass.push(T([0,1])([-5.5,-20-26])(grass2));
 			var grass3 = COLOR(grassColor)(
-				SIMPLEX_GRID([[0,10],[0,9],[0,0.03]]));
+				SIMPLEX_GRID([[0,10],[0,9],[0,0.05]]));
 			grass.push(T([0,1])([-21-10-3,20-9-1])(grass3));
 			var grass4 = COLOR(grassColor)(
-				SIMPLEX_GRID([[0,10],[0,12],[0,0.03]]));
+				SIMPLEX_GRID([[0,10],[0,12],[0,0.05]]));
 			grass.push(T([0,1])([-21-10-3,-6])(grass4));
 			var grass5 = COLOR(grassColor)(
-				SIMPLEX_GRID([[0,10],[0,45+9],[0,0.03]]));
-			grass.push(T([0,1])([-21-10-3,-54-14])(grass5));
-			var grass6 = COLOR(grassColor)(
-				SIMPLEX_GRID([[0,10],[0,45+9],[0,0.03]]));
-			grass.push(T([0,1])([-21-10-3,-54-14])(grass6));
+				SIMPLEX_GRID([[0,10],[0,30+9],[0,0.05]]));
+			grass.push(T([0,1])([-21-10-3,-30-9-14])(grass5));
 
 
-			var p0 = [[-16,-26,0],[-15,-26,0],
-				[-15,-28,0],[-15,-60,0],[-6,-62,0],
-				[-6,-63,0],[-6,-68,0]];
+			var p0 = [[-12-0.5,-26,0],[-11-0.5,-26,0],
+				[-11-0.5,-30,0],[-11-0.5,-45,0],
+				[-10-0.5,-50,0],[-9-0.5,-52,0],
+				[-6-0.5,-53,0]];
 			var k0 = makeKnots(p0,2);
 			var c0 = NUBS(S0)(2)(k0)(p0);
-			var p1 = [[-24,-26,0],[-24,-68,0]];
+			var p1 = [[-24,-26,0],[-24,-53,0]];
 			var c1 = BEZIER(S0)(p1);	
 			var vert0 = BEZIER(S1)([c0,c1]);
 
-			p0 = movesPoints(p0,2,0.03);
+			p0 = movesPoints(p0,2,0.05);
 			k0 = makeKnots(p0,2);
 			c0 = NUBS(S0)(2)(k0)(p0);
-			p1 = movesPoints(p1,2,0.03);
+			p1 = movesPoints(p1,2,0.05);
 			c1 = BEZIER(S0)(p1);	
 			var vert1 = BEZIER(S1)([c0,c1]);
 
