@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Villa Almerico Capra &quot;La Rotonda&quot; : Construction of three-dimensional model of the Palladian Villa in Plasm.js" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Villa Almerico Capra &quot;La Rotonda&quot;</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Faber89/cg-final-project">View on GitHub</a>
+
+          <h1 id="project_title">Villa Almerico Capra &quot;La Rotonda&quot;</h1>
+          <h2 id="project_tagline">Construction of three-dimensional model of the Palladian Villa in Plasm.js</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Faber89/cg-final-project/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Faber89/cg-final-project/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><img src="http://upload.wikimedia.org/wikipedia/commons/e/ec/Villa_Rotonda_side.jpg" alt="VillaFront"></p>
+
+<h2>Introduction</h2>
+
+<p>The Palladian Villas are a collection of villas built in the mid-sixteenth century by Andrea Palladio in the territory of the Republic of Venice and concentrated mostly in the province of Vicenza. One of these is Villa La Rotonda, a Renaissance villa just outside Vicenza, northern Italy. The proper name is Villa Almerico Capra, but it is also known as La Rotonda.</p>
+
+<p>The design is for a completely symmetrical building having a square plan with four facades, each of which has a projecting portico. The whole is contained within an imaginary circle which touches each corner of the building and centres of the porticos. The name La Rotonda refers to the central circular hall with its dome. To describe the villa, as a whole, as a 'rotonda' is technically incorrect, as the building is not circular but rather the intersection of a square with a cross. Each portico has steps leading up, and opens via a small cabinet or corridor to the circular domed central hall. This and all other rooms were proportioned with mathematical precision according to Palladio's own rules of architecture which he published in the Quattro Libri dell'Architettura (Source - <a href="http://en.wikipedia.org/wiki/Villa_Capra_%22La_Rotonda%22">Wikipedia</a>, More information can be found on the official website - <a href="http://www.villalarotonda.it/">Villa la Rotonda</a>).</p>
+
+<h2>Hierarchical decomposition of the model</h2>
+
+<p>In the study of the creation of three-dimensional model, we chose to hierarchically decompose the structure of the villa into five parts:</p>
+
+<ul>
+<li><strong>Base of the structure with garden</strong></li>
+<li><strong>Facade of the villa</strong></li>
+<li><strong>Colonnade</strong></li>
+<li><strong>Gable of the structure</strong></li>
+<li><strong>Roof with dome</strong></li>
+</ul><p>For all the hierarchical tiers were used all the operators and functions used during the course, like <code>SIMPLEX_GRID</code> primitive, <code>BEZIER</code> and <code>NUBS</code> mapped on appropriate domains. Moreover the affine transformations Translate <code>T</code>, Scale <code>S</code> and Rotate <code>R</code> were used for the building and the placement of all the elements.
+Moreover, for the realization of the model were defined support functions to speed up the work:</p>
+
+<ul>
+<li><code>makeKnots(points,grade)</code></li>
+<li><code>scalePoints(pointList, scale)</code></li>
+<li><code>rotatePoints(pointList, angle, axis)</code></li>
+<li><code>movesPoints(pointList, axis, qty)</code></li>
+</ul><p>Respectively, the first is used to generate the control points of a <code>NUBS</code> while the remaining, to scale, rotate or translate a set of points.</p>
+
+<p><em>Below are shown the results obtained in the iterative modeling through the development environment <strong>plasm.js</strong>, and for each iteration some considerations and code concerning the realization.</em></p>
+
+<h3>Base of the structure with garden</h3>
+
+<p>For the construction of the base of the structure were mainly used <code>SIMPLEX_GRID</code>, <code>T</code> (translation), <code>R</code> (rotation), <code>REPLICA</code>, <code>STRUCT</code> and <code>NUBS</code> functions to draw transfinite non-uniform B-Spline.
+In addition, we chose to make only one side of the base of the structure and then get the other through affine transformations T (translation) and R (rotation) because they are symmetrical.
+Particularly, in the building of the tunnel behind the steps, the archway is made by two bidimensional NUBS for the archs and a product between them by the <code>BEZIER</code> (S1) function. The grates are realized by two SIMPLEX_GRID (one vertical and one horizontal) replicated and then translated through the function REPLICA</p>
+
+<p><img src="https://github.com/Faber89/cg-final-project/blob/master/images/base.jpg?raw=true" alt="Base"></p>
+
+<p>Code for the construction of staircases and gratings:</p>
+
+<pre><code>  ...
+  //Stairs
+  var stairsHeight = 3/23;
+  var stairsDepth = 6/22;
+  var stairsLength = 7;
+  var numberOfStairs = 22; 
+
+  var drawStairs = function(){
+    var stairs = [];
+    for (var i = 0; i &lt; numberOfStairs; i++) {
+      stairs.push(SIMPLEX_GRID([
+        [0,stairsLength],
+        [-i*(stairsDepth),stairsDepth],
+        [-i*stairsHeight,stairsHeight]
+      ]));
+    };
+    return COLOR(columnsColor)(STRUCT(stairs));
+  }
+
+  //Barrier
+  var orizontalBarrier = COLOR([0,0,0])(
+    SIMPLEX_GRID([[0,1],[0,0.02],[0,0.02]]));
+  var verticalBarrier = COLOR([0,0,0])(
+    SIMPLEX_GRID([[0,0.02],[0,0.02],[0,1]]));
+
+  walls.push(
+    T([0,1,2])([distanceFromBorder,0.3,1.4])(
+    R([0,1])(PI/2)(
+    STRUCT([
+      STRUCT(REPLICA(9)([T([2])([0.1]),orizontalBarrier])),
+      STRUCT(REPLICA(9)([T([0])([0.1]),verticalBarrier]))]
+  ))));
+  ...
+</code></pre>
+
+<h3>Facade of the villa</h3>
+
+<p>In this hierarchical level is made the façade of the villa with the same principle used in the construction of the base. Once created a facade with door and windows, the others are obtained through affine transformations.
+For the construction of the grates of the windows and the door is being used the <code>POLYLINE</code> function, while for the eaves a <code>NUBS</code> of the second degree to draw the profile.</p>
+
+<p><img src="https://github.com/Faber89/cg-final-project/blob/master/images/facade.jpg?raw=true" alt="Facade"></p>
+
+<p>Code used for the construction of the gratings of one of the windows drawn in the model:</p>
+
+<pre><code>  ...
+  var drawSquareGrate = function(hDistance, vDistance) {
+    var grateIntervals = 0.2;
+
+    var polyStruct = [];
+    for (var i = 0; i &lt;= hDistance; i += grateIntervals) {
+      polyStruct.push( POLYLINE([[i,0,0],[i,0,vDistance]]) );
+    }
+    for (var i = 0; i &lt;= vDistance; i += grateIntervals) {
+      polyStruct.push( POLYLINE([[0,0,i],[hDistance,0,i]]) );
+    }
+
+    return COLOR([0,0,0])(STRUCT(polyStruct));
+  };  
+  ...
+</code></pre>
+
+<h3>Colonnade</h3>
+
+<p>The colonnade is the most complex part of the project, along with the gable, as it was decided to model the capital as an Archimedean spiral drawn by a <code>NUBS</code> (<a href="http://en.wikipedia.org/wiki/Archimedean_spiral">Archimedean spiral</a>). It was also used a domain light enough to avoid overloading the global model. To draw the column instead, a curve was drawn to represent the profile (Nubs through a second level) and then build from it the surface of the column using the function <code>ROTATIONAL_SURFACE</code> (using a suitable two-dimensional domain).</p>
+
+<p><img src="https://github.com/Faber89/cg-final-project/blob/master/images/column.jpg?raw=true" alt="Column"></p>
+
+<p>Code of the function that generates the control points of the spiral:</p>
+
+<pre><code>  ...
+  var capitalControlsPoints = function(maxRadius) {
+    maxRadius = maxRadius || 1;
+    var controlPoints = [];
+
+    var i = 0;
+    var Angle = PI/2;
+
+    for (i = 0; i &lt; 13; i++) {
+      controlPoints.push( [
+        maxRadius * ( COS(i*Angle) + i*SIN(i*Angle)  ),
+        0,
+        maxRadius * ( SIN(i*Angle) - i*COS(i*Angle)  )] );
+      }
+
+    return controlPoints;
+  };
+  ...
+</code></pre>
+
+<h3>Gable of the structure</h3>
+
+<p>In the realization of the gable of the structure have been used mainly curves (NUBS and BEZIER) to draw the profile of each party, and thereby complete the area needed. Furthermore, in the upper part of the eardrum have been positioned the pedestals necessary to the statues (which for simplicity, have not been implemented in the project).In particular, the the roof has been created by the product of Nubs and BEZIER (using S1), while the ornaments with the <code>CUBOID</code> function properly replicated and roto-translated.</p>
+
+<p><img src="https://github.com/Faber89/cg-final-project/blob/master/images/Gable.jpg?raw=true" alt="Gable"></p>
+
+<p>Code used for the generation of the cuboidal ornaments: </p>
+
+<pre><code>  ...
+  var drawEmbroidery = function(l,d,trasl,x,y,z,n,f){
+    var cubes = [];         
+    var p = l - (d + f + 2*x);
+    var i = p/n;
+    var cube = SIMPLEX_GRID([[0,x],[0,y],[0,z]]);
+
+    cubes.push(T([0,2])([d-(i/2-x/2),trasl])(cube));
+    cubes.push(T([0,2])([l-f-x+(i/2-x/2),trasl])(cube));
+    var j = 0;
+    while (j &lt; n) {
+      cubes.push(T([0,2])([
+        (d+x)+(i/2-x/2)+(j*i),
+        trasl])(cube));
+      j += 1;
+    }
+    return COLOR(columnsColor)(STRUCT(cubes));
+  }
+  ...
+</code></pre>
+
+<h3>Roof with dome</h3>
+
+<p>The roof has been created through the product of a <code>NUBS</code> of the first level and a point representing the apex of the roof while for the dome were made ​​several profiles (for coloring them differently) and then perform through the <code>ROTATIONAL_SURFACE</code> each surface.</p>
+
+<p><img src="https://github.com/Faber89/cg-final-project/blob/master/images/roof&amp;Dome.jpg?raw=true" alt="RoofAndDome"></p>
+
+<h3>Complete model</h3>
+
+<p>The complete model, as a result of the union of each hierarchical level, is as follows (it is compared with some images of the villa):</p>
+
+<p><strong>Central part of the villa</strong>
+<img src="https://github.com/Faber89/cg-final-project/blob/master/images/completeModel1.jpg?raw=true" alt="Model1"></p>
+
+<p><strong>Side of the villa - 1</strong>
+<img src="https://github.com/Faber89/cg-final-project/blob/master/images/completeModel2.jpg?raw=true" alt="Model2"></p>
+
+<p><strong>Side of the villa - 2</strong>
+<img src="https://github.com/Faber89/cg-final-project/blob/master/images/completeModel3.jpg?raw=true" alt="Model3"></p>
+
+<p><strong>Staircase and colonnade</strong>
+<img src="https://github.com/Faber89/cg-final-project/blob/master/images/completeModel4.jpg?raw=true" alt="Model4"></p>
+
+<p><strong>View from the top</strong>
+<img src="https://github.com/Faber89/cg-final-project/blob/master/images/completeModel5.jpg?raw=true" alt="Model5"></p>
+
+<p><strong>To see the full javascript code: <a href="https://raw.github.com/cvdlab-cg/418041/master/final-project/model.js">model.js</a></strong></p>
+
+<h2>Disclaimer</h2>
+
+<p>Some content on this site (including text and images) are taken from the web and belong to their respective owners.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Villa Almerico Capra &quot;La Rotonda&quot; maintained by <a href="https://github.com/Faber89">Faber89</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
